@@ -6,30 +6,34 @@
 <title>法国危机关系图谱</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* Layout: Obsidian vault — ribbon | search pane | split main (graph view on top, note below) */
+/* Layout: index pane on the left | split main: graph canvas on top, reading note below (collapsible) */
 :root{
-  --bg:#1e1e1e; --bg-2:#262626; --bg-3:#2f2f2f; --border:#363636; --hover:rgba(255,255,255,.06);
-  --text:#dcddde; --muted:#999; --faint:#666; --accent:#a68af9; --accent-strong:#8a5cf5;
+  --bg:#14161b; --bg-2:#1b1e24; --bg-3:#232730; --border:#2a2e37; --hover:rgba(255,255,255,.06);
+  --text:#e2e4e9; --muted:#9aa0ab; --faint:#646a75; --accent:#f472b6; --accent-strong:#db2777;
   --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
   color-scheme:dark;
 }
 html:lang(en){--font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif}
 html:lang(ja){--font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI","Meiryo","Noto Sans CJK JP",sans-serif}
 html:lang(ko){--font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic","Noto Sans CJK KR",sans-serif}
-*{box-sizing:border-box}
+*{box-sizing:border-box;scrollbar-width:thin;scrollbar-color:#3a3f4a transparent}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#3a3f4a;border-radius:4px}
 [hidden]{display:none!important}
 html,body{margin:0;background:var(--bg);color:var(--text)}
 body{font:14px/1.5 var(--font-ui);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
-.window{display:grid;grid-template-columns:44px 250px minmax(0,1fr);grid-template-rows:minmax(0,1fr);height:min(94vh,940px);min-height:660px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--bg)}
-.ribbon{background:var(--bg-2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0}
-.ribbon i{width:28px;height:28px;display:grid;place-items:center;border-radius:5px;color:var(--faint)}
-.ribbon i.on{color:var(--text);background:var(--hover)}
+.window{display:grid;grid-template-columns:250px minmax(0,1fr);grid-template-rows:minmax(0,1fr);height:min(94vh,940px);min-height:660px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--bg)}
 .pane{background:var(--bg-2);border-right:1px solid var(--border);display:flex;flex-direction:column;min-width:0}
-.pane-head{display:flex;gap:4px;padding:8px 10px;border-bottom:1px solid var(--border);color:var(--faint)}
-.pane-head span{width:26px;height:24px;display:grid;place-items:center;border-radius:4px}
-.pane-head span.on{color:var(--text);background:var(--hover)}
+.brand{display:flex;align-items:center;gap:10px;height:46px;padding:0 14px;border-bottom:1px solid var(--border);font-weight:600;font-size:14px;flex:none}
+.brand .mark{display:grid;grid-template-columns:repeat(2,6px);gap:3px;flex:none}
+.brand .mark i{width:6px;height:6px;border-radius:50%}
+.brand span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.phead{display:flex;align-items:center;gap:6px;height:46px;padding:0 10px 0 14px;background:var(--bg-2);border-bottom:1px solid var(--border);flex:none;font-size:13px}
+.phead .ptitle{font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.phead .ib{width:28px;height:28px;display:grid;place-items:center;border-radius:6px;color:var(--muted);flex:none}
+.phead .ib:hover:not(:disabled){background:var(--hover);color:var(--text)}
+.phead .ib:disabled{opacity:.3;cursor:default}
 .search{display:flex;align-items:center;gap:6px;margin:10px;padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--faint)}
 .search:focus-within{border-color:var(--accent-strong)}
 .search input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--text);font:13px var(--font-ui)}
@@ -41,42 +45,30 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .dot{width:7px;height:7px;border-radius:50%;flex:none;display:inline-block}
 .item{display:flex;align-items:center;gap:8px;width:100%;padding:3px 8px 3px 19px;text-align:left;border-radius:4px;font-size:13px}
 .item:hover{background:var(--hover)}
-.item.on{background:rgba(138,92,245,.2);color:#fff}
+.item.on{background:rgba(244,114,182,.16);color:#fff}
 .item .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .item .deg{font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums;background:var(--hover);padding:0 6px;border-radius:8px}
 .main{display:grid;grid-template-rows:minmax(0,2.4fr) minmax(0,1fr);min-width:0;min-height:0;transition:grid-template-rows .28s ease}
-.main.collapsed{grid-template-rows:minmax(0,1fr) 38px}
-.main.collapsed .npane .crumb,.main.collapsed .nscroll,.main.collapsed .status{display:none}
-.npane .tabbar{cursor:pointer}
-.npane .tabbar:hover{background:#2a2a2a}
-.fold{margin-left:auto;align-self:center;width:28px;height:28px;display:grid;place-items:center;border-radius:5px;color:var(--muted)}
+.main.collapsed{grid-template-rows:minmax(0,1fr) 46px}
+.main.collapsed .nscroll,.main.collapsed .status{display:none}
+.npane .phead{cursor:pointer}
+.npane .phead:hover{background:var(--bg-3)}
+.fold{margin-left:auto;width:28px;height:28px;display:grid;place-items:center;border-radius:5px;color:var(--muted)}
 .fold:hover{background:var(--hover);color:var(--text)}
 .fold svg{transition:transform .2s}
 .main.collapsed .fold svg{transform:rotate(180deg)}
 @media (prefers-reduced-motion:reduce){.main{transition:none}}
 .gpane,.npane{display:flex;flex-direction:column;min-height:0;position:relative;overflow:hidden}
 .gpane{border-bottom:1px solid var(--border)}
-.tabbar{display:flex;align-items:flex-end;height:38px;background:var(--bg-2);border-bottom:1px solid var(--border);padding:0 8px;flex:none}
-.tab{display:flex;align-items:center;gap:8px;height:30px;max-width:280px;padding:0 10px 0 12px;background:var(--bg);border:1px solid var(--border);border-bottom:0;border-radius:8px 8px 0 0;font-size:13px;margin-bottom:-1px}
-.gpane .tabbar{position:relative;z-index:5}
-.langwrap{margin-left:auto;align-self:center;position:relative}
+.gpane .phead{position:relative;z-index:5}
+.langwrap{margin-left:auto;position:relative}
 .langbtn{display:flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:6px;color:var(--muted);font-size:13px;border:1px solid var(--border);background:var(--bg)}
-.langbtn:hover,.langbtn[aria-expanded="true"]{color:var(--text);border-color:#4a4a4a}
+.langbtn:hover,.langbtn[aria-expanded="true"]{color:var(--text);border-color:#3e4450}
 .langmenu{position:absolute;right:0;top:calc(100% + 6px);min-width:150px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:4px;box-shadow:0 8px 30px rgba(0,0,0,.45);display:flex;flex-direction:column}
 .langmenu button{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:6px 10px;border-radius:5px;font-size:13px;text-align:left}
 .langmenu button:hover{background:var(--hover)}
 .langmenu button[aria-checked="true"]{color:var(--accent)}
 .langmenu button[aria-checked="true"]::after{content:"✓"}
-.tab .tt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tab .pin{color:var(--accent)}
-.tab button{width:18px;height:18px;display:grid;place-items:center;border-radius:4px;color:var(--faint)}
-.tab button:hover{background:var(--hover);color:var(--text)}
-.crumb{display:flex;align-items:center;justify-content:center;height:34px;font-size:13px;color:var(--muted);position:relative;flex:none;padding:0 70px}
-.crumb > span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.navs{position:absolute;left:10px;display:flex;gap:2px;color:var(--faint)}
-.navs button,.navs span{width:24px;height:24px;display:grid;place-items:center;border-radius:4px}
-.navs button:hover:not(:disabled){background:var(--hover);color:var(--text)}
-.navs button:disabled{opacity:.35;cursor:default}
 .wrap{position:relative;flex:1;min-height:0;overflow:hidden}
 canvas{position:absolute;inset:0;display:block;width:100%;height:100%;cursor:grab;touch-action:none}
 canvas.dragging{cursor:grabbing}
@@ -99,7 +91,7 @@ canvas.dragging{cursor:grabbing}
 .row label.g{color:var(--text)}
 .toggle{position:relative;width:32px;height:18px;flex:none}
 .toggle input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
-.toggle span{position:absolute;inset:0;background:#454545;border-radius:9px;transition:background .15s;pointer-events:none}
+.toggle span{position:absolute;inset:0;background:#3a3f4a;border-radius:9px;transition:background .15s;pointer-events:none}
 .toggle span::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#e6e6e6;transition:transform .15s}
 .toggle input:checked + span{background:var(--accent-strong)}
 .toggle input:checked + span::after{transform:translateX(14px)}
@@ -118,7 +110,7 @@ input[type=range]{width:100%;accent-color:var(--accent-strong)}
 .note a{color:var(--accent);text-decoration:none}
 .note a:hover{text-decoration:underline}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
-.chip{font-size:13px;color:var(--accent);background:rgba(166,138,249,.15);padding:1px 9px;border-radius:12px}
+.chip{font-size:13px;color:var(--accent);background:rgba(244,114,182,.14);padding:1px 9px;border-radius:12px}
 .facts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 .facts li{padding:10px 14px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;font-size:14px;line-height:1.7}
 .facts b{display:block;font-weight:600;color:#fff;font-size:14px}
@@ -134,34 +126,24 @@ input[type=range]{width:100%;accent-color:var(--accent-strong)}
 .srcs summary{cursor:pointer;color:var(--text);font-weight:600;font-size:15px}
 .srcs ol{padding-left:20px;line-height:1.9}
 .srcs a{word-break:break-all}
+.credit{margin-top:18px;font-size:12px;color:var(--faint)}
 .status{position:absolute;right:0;bottom:0;padding:3px 12px;font-size:12px;color:var(--muted);background:var(--bg-2);border:1px solid var(--border);border-right:0;border-bottom:0;border-radius:8px 0 0 0;font-variant-numeric:tabular-nums}
 @media (max-width:760px){
   .window{grid-template-columns:1fr;grid-template-rows:auto;height:auto;min-height:0}
-  .ribbon,.pane{display:none}
+  .pane{display:none}
   .main{grid-template-rows:62vh auto}
-  .main.collapsed{grid-template-rows:62vh 38px}
+  .main.collapsed{grid-template-rows:62vh 46px}
   .gpane{min-height:420px}
   .nscroll{overflow:visible}
   .note{padding:12px 4px 48px}
-  .crumb{padding:0 50px}
   .controls{right:50px;width:min(236px,calc(100% - 62px))}
 }
 </style>
 </head>
 <body>
 <div class="window">
-  <nav class="ribbon" aria-hidden="true">
-    <i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></i>
-    <i class="on"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="8" r="2.5"/><circle cx="10" cy="18" r="2.5"/><path d="M8 7l7.5 1M7 8l2 8M12 17l4.5-7"/></svg></i>
-    <i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></i>
-    <i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 4h11v13H8zM5 7v13h11"/></svg></i>
-  </nav>
   <aside class="pane">
-    <div class="pane-head" aria-hidden="true">
-      <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h6l2 2h10v10H3z"/></svg></span>
-      <span class="on"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
-      <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span>
-    </div>
+    <div class="brand"><span class="mark" aria-hidden="true"><i style="background:#e8896b"></i><i style="background:#6aa9f0"></i><i style="background:#3ccf8e"></i><i style="background:#f5c445"></i></span><span id="brand">法国危机关系图谱</span></div>
     <label class="search" for="q">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" type="text" data-i18n-ph="search" placeholder="搜索节点…" autocomplete="off">
@@ -172,8 +154,7 @@ input[type=range]{width:100%;accent-color:var(--accent-strong)}
   </aside>
   <main class="main">
     <section class="gpane">
-      <div class="tabbar"><div class="tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="8" r="2.5"/><circle cx="10" cy="18" r="2.5"/><path d="M8 7l7.5 1M7 8l2 8M12 17l4.5-7"/></svg><span class="tt" data-i18n="graphView">Graph view</span><svg class="pin" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4h6l-1 6 4 4H6l4-4zM12 14v7"/></svg></div><div class="langwrap"><button class="langbtn" id="langbtn" type="button" aria-haspopup="menu" aria-expanded="false" data-i18n-attr="title:language;aria-label:language" title="语言" aria-label="语言"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span id="langcur">中文</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button><div class="langmenu" id="langmenu" role="menu" hidden><button type="button" role="menuitemradio" data-lang="zh" lang="zh-CN">中文</button><button type="button" role="menuitemradio" data-lang="en" lang="en">English</button><button type="button" role="menuitemradio" data-lang="ja" lang="ja">日本語</button><button type="button" role="menuitemradio" data-lang="ko" lang="ko">한국어</button></div></div></div>
-      <div class="crumb"><span class="navs" aria-hidden="true"><span>‹</span><span>›</span></span><span data-i18n="graphView">Graph view</span></div>
+      <div class="phead"><span class="ptitle" data-i18n="graphView">关系图谱</span><div class="langwrap"><button class="langbtn" id="langbtn" type="button" aria-haspopup="menu" aria-expanded="false" data-i18n-attr="title:language;aria-label:language" title="语言" aria-label="语言"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span id="langcur">中文</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button><div class="langmenu" id="langmenu" role="menu" hidden><button type="button" role="menuitemradio" data-lang="zh" lang="zh-CN">中文</button><button type="button" role="menuitemradio" data-lang="en" lang="en">English</button><button type="button" role="menuitemradio" data-lang="ja" lang="ja">日本語</button><button type="button" role="menuitemradio" data-lang="ko" lang="ko">한국어</button></div></div></div>
       <div class="wrap" id="wrap">
         <canvas id="cv" data-i18n-attr="aria-label:canvas" aria-label="法国危机关系图谱：可拖拽、缩放，点击节点查看说明"></canvas>
         <div class="tools">
@@ -218,8 +199,7 @@ input[type=range]{width:100%;accent-color:var(--accent-strong)}
       </div>
     </section>
     <section class="npane">
-      <div class="tabbar"><div class="tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/></svg><span class="tt" id="ntab"></span><button id="nclose" type="button" data-i18n-attr="aria-label:overview;title:overview" aria-label="返回总览" title="返回总览"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><button class="fold" id="nfold" type="button" aria-label="收起笔记面板" aria-expanded="true" data-i18n-attr="title:foldTitle" title="收起 / 展开"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button></div>
-      <div class="crumb"><span class="navs"><button id="nback" type="button" data-i18n-attr="aria-label:back" aria-label="后退">‹</button><button id="nfwd" type="button" data-i18n-attr="aria-label:fwd" aria-label="前进">›</button></span><span id="ncrumb"></span></div>
+      <div class="phead"><button class="ib" id="nback" type="button" data-i18n-attr="aria-label:back;title:back" aria-label="后退" title="后退"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="ib" id="nfwd" type="button" data-i18n-attr="aria-label:fwd;title:fwd" aria-label="前进" title="前进"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button><span class="ptitle" id="ntab"></span><button class="ib" id="nclose" type="button" data-i18n-attr="aria-label:overview;title:overview" aria-label="返回总览" title="返回总览"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="ib fold" id="nfold" type="button" aria-label="收起笔记面板" aria-expanded="true" data-i18n-attr="title:foldTitle" title="收起 / 展开"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button></div>
       <div class="nscroll" id="nscroll"><article class="note" id="note"></article></div>
       <div class="status" id="status"></div>
     </section>
@@ -238,7 +218,7 @@ const G=window.GRAPH, GROUPS=G.groups, gkeys=Object.keys(GROUPS);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
 let FONT=getComputedStyle(document.documentElement).getPropertyValue("--font-ui").trim();
-const ACC="#a68af9", BG="#1e1e1e", LINE="#4d4d4d", TEXT="#c9c9c9";
+const ACC="#f472b6", BG="#14161b", LINE="#3e4450", TEXT="#cfd3da";
 const gc=g=>(GROUPS[g]||{color:"#999999"}).color;
 const LANGS=[["zh","中文"],["en","English"],["ja","日本語"],["ko","한국어"]];
 const UI={
@@ -247,28 +227,28 @@ const UI={
   groups:"分组",display:"显示",hull:"分组水洼",flow:"因果流动",arrows:"箭头",fade:"文字渐隐阈值",nodeSize:"节点大小",lineWidth:"连线粗细",
   strong:"较直接",weak:"间接",contested:"有争议",forces:"力",cluster:"分组聚拢",repel:"排斥力",linkF:"连线力",linkD:"连线距离",
   overview:"返回总览",fold:"收起笔记面板",unfold:"展开笔记面板",foldTitle:"收起 / 展开",back:"后退",fwd:"前进",
-  keyFacts:"关键数据",sources:n=>`参考来源（${n}）`,source:"来源 ↗",outLinks:n=>`出链：它影响了（${n}）`,inLinks:n=>`反向链接：它的成因（${n}）`,nLinks:n=>`${n} 条关联`,
+  keyFacts:"关键数据",credit:"可视化基于 d3.js（ISC 许可，© Mike Bostock）。界面为原创设计，与任何笔记软件无关。",sources:n=>`参考来源（${n}）`,source:"来源 ↗",outLinks:n=>`出链：它影响了（${n}）`,inLinks:n=>`反向链接：它的成因（${n}）`,nLinks:n=>`${n} 条关联`,
   statusOverview:(n,l)=>`${n} 个节点 · ${l} 条关联`,statusNode:(i,o,c)=>`${i} 条反向链接 · ${o} 条出链 · ${c} 字`},
- en:{language:"Language",search:"Search nodes…",clear:"Clear search",results:n=>`${n} results`,sortBy:"Sorted by links",graphView:"Graph view",canvas:"France crisis graph: drag, zoom, and click a node to read its note",
+ en:{language:"Language",search:"Search nodes…",clear:"Clear search",results:n=>`${n} results`,sortBy:"Sorted by links",graphView:"Relationship graph",canvas:"France crisis graph: drag, zoom, and click a node to read its note",
   settings:"Graph settings",relayout:"Re-layout",zoomIn:"Zoom in",fit:"Fit to view",zoomOut:"Zoom out",reset:"Restore defaults",filters:"Filters",showWeak:"Show indirect links",showCont:"Show contested links",
   groups:"Groups",display:"Display",hull:"Group areas",flow:"Causal flow",arrows:"Arrows",fade:"Label fade threshold",nodeSize:"Node size",lineWidth:"Link thickness",
   strong:"Direct",weak:"Indirect",contested:"Contested",forces:"Forces",cluster:"Group pull",repel:"Repel force",linkF:"Link force",linkD:"Link distance",
   overview:"Back to overview",fold:"Collapse note pane",unfold:"Expand note pane",foldTitle:"Collapse / expand",back:"Back",fwd:"Forward",
-  keyFacts:"Key facts",sources:n=>`Sources (${n})`,source:"Source ↗",outLinks:n=>`Outgoing: what it affects (${n})`,inLinks:n=>`Backlinks: what caused it (${n})`,nLinks:n=>`${n} links`,
+  keyFacts:"Key facts",credit:"Visualization built with d3.js (ISC License, © Mike Bostock). Original interface design, not affiliated with any note-taking app.",sources:n=>`Sources (${n})`,source:"Source ↗",outLinks:n=>`Outgoing: what it affects (${n})`,inLinks:n=>`Backlinks: what caused it (${n})`,nLinks:n=>`${n} links`,
   statusOverview:(n,l)=>`${n} nodes · ${l} links`,statusNode:(i,o,c)=>`${i} backlinks · ${o} outgoing · ${c} chars`},
- ja:{language:"言語",search:"ノードを検索…",clear:"検索をクリア",results:n=>`${n} 件`,sortBy:"リンク数順",graphView:"グラフビュー",canvas:"フランス危機の関係グラフ：ドラッグ・ズーム可能、ノードをクリックで説明を表示",
+ ja:{language:"言語",search:"ノードを検索…",clear:"検索をクリア",results:n=>`${n} 件`,sortBy:"リンク数順",graphView:"関係グラフ",canvas:"フランス危機の関係グラフ：ドラッグ・ズーム可能、ノードをクリックで説明を表示",
   settings:"グラフ設定",relayout:"再配置",zoomIn:"拡大",fit:"全体を表示",zoomOut:"縮小",reset:"初期設定に戻す",filters:"フィルター",showWeak:"間接的な関連を表示",showCont:"議論のある関連を表示",
   groups:"グループ",display:"表示",hull:"グループ領域",flow:"因果の流れ",arrows:"矢印",fade:"ラベルのフェード",nodeSize:"ノードの大きさ",lineWidth:"リンクの太さ",
   strong:"直接的",weak:"間接的",contested:"議論あり",forces:"フォース",cluster:"グループの引力",repel:"反発力",linkF:"リンクの力",linkD:"リンクの距離",
   overview:"概要に戻る",fold:"ノートを折りたたむ",unfold:"ノートを展開",foldTitle:"折りたたむ／展開",back:"戻る",fwd:"進む",
-  keyFacts:"主なデータ",sources:n=>`参考資料（${n}）`,source:"出典 ↗",outLinks:n=>`発リンク：影響を与えたもの（${n}）`,inLinks:n=>`バックリンク：その原因（${n}）`,nLinks:n=>`リンク ${n}`,
+  keyFacts:"主なデータ",credit:"可視化には d3.js（ISC ライセンス、© Mike Bostock）を使用。インターフェースは独自デザインであり、特定のノートアプリとは無関係です。",sources:n=>`参考資料（${n}）`,source:"出典 ↗",outLinks:n=>`発リンク：影響を与えたもの（${n}）`,inLinks:n=>`バックリンク：その原因（${n}）`,nLinks:n=>`リンク ${n}`,
   statusOverview:(n,l)=>`ノード ${n} · リンク ${l}`,statusNode:(i,o,c)=>`バックリンク ${i} · 発リンク ${o} · ${c} 文字`},
- ko:{language:"언어",search:"노드 검색…",clear:"검색 지우기",results:n=>`결과 ${n}개`,sortBy:"연결 수 순",graphView:"그래프 뷰",canvas:"프랑스 위기 관계도: 드래그·확대 가능, 노드를 클릭하면 설명 표시",
+ ko:{language:"언어",search:"노드 검색…",clear:"검색 지우기",results:n=>`결과 ${n}개`,sortBy:"연결 수 순",graphView:"관계 그래프",canvas:"프랑스 위기 관계도: 드래그·확대 가능, 노드를 클릭하면 설명 표시",
   settings:"그래프 설정",relayout:"다시 배치",zoomIn:"확대",fit:"화면에 맞추기",zoomOut:"축소",reset:"기본값 복원",filters:"필터",showWeak:"간접 연결 표시",showCont:"논쟁적 연결 표시",
   groups:"그룹",display:"표시",hull:"그룹 영역",flow:"인과 흐름",arrows:"화살표",fade:"라벨 페이드 기준",nodeSize:"노드 크기",lineWidth:"연결선 굵기",
   strong:"직접적",weak:"간접적",contested:"논쟁적",forces:"힘",cluster:"그룹 응집력",repel:"반발력",linkF:"연결 힘",linkD:"연결 거리",
   overview:"개요로 돌아가기",fold:"노트 접기",unfold:"노트 펼치기",foldTitle:"접기 / 펼치기",back:"뒤로",fwd:"앞으로",
-  keyFacts:"핵심 데이터",sources:n=>`참고 자료 (${n})`,source:"출처 ↗",outLinks:n=>`나가는 링크: 영향을 준 것 (${n})`,inLinks:n=>`백링크: 원인 (${n})`,nLinks:n=>`연결 ${n}개`,
+  keyFacts:"핵심 데이터",credit:"시각화는 d3.js(ISC 라이선스, © Mike Bostock)를 사용했습니다. 인터페이스는 독자 디자인이며 특정 노트 앱과 무관합니다.",sources:n=>`참고 자료 (${n})`,source:"출처 ↗",outLinks:n=>`나가는 링크: 영향을 준 것 (${n})`,inLinks:n=>`백링크: 원인 (${n})`,nLinks:n=>`연결 ${n}개`,
   statusOverview:(n,l)=>`노드 ${n}개 · 연결 ${l}개`,statusNode:(i,o,c)=>`백링크 ${i}개 · 나가는 링크 ${o}개 · ${c}자`}
 };
 const I18N=window.GRAPH_I18N||{};
@@ -383,7 +363,7 @@ function drawNodes(f){
     if(focus){
       ctx.beginPath();ctx.arc(n.x,n.y,r,0,7);ctx.fillStyle=ACC;ctx.fill();ctx.shadowBlur=0;
       ctx.beginPath();ctx.arc(n.x,n.y,r+6,0,7);ctx.strokeStyle=ACC;ctx.lineWidth=1.6;ctx.stroke();
-      ctx.beginPath();ctx.arc(n.x,n.y,r*.42,0,7);ctx.fillStyle="#f3efff";ctx.fill();
+      ctx.beginPath();ctx.arc(n.x,n.y,r*.42,0,7);ctx.fillStyle="#ffe3f0";ctx.fill();
     }else if(GROUPS[n.group]&&GROUPS[n.group].ring){
       ctx.beginPath();ctx.arc(n.x,n.y,r,0,7);ctx.fillStyle=c;ctx.fill();ctx.shadowBlur=0;
       ctx.beginPath();ctx.arc(n.x,n.y,r*.5,0,7);ctx.fillStyle=mix(c,"#ffffff",.72);ctx.fill();
@@ -403,7 +383,7 @@ function drawLabels(f){
     const near=f&&(n.id===f||adj.get(f).has(n.id)), a=n.a*(near?1:za);
     if(a<.02)continue;
     const y=n.y+R(n)+(n.id===f?9:5);
-    ctx.globalAlpha=a;ctx.lineWidth=3.5/T.k;ctx.strokeStyle="rgba(30,30,30,.85)";ctx.strokeText(label(n),n.x,y);
+    ctx.globalAlpha=a;ctx.lineWidth=3.5/T.k;ctx.strokeStyle="rgba(20,22,27,.85)";ctx.strokeText(label(n),n.x,y);
     ctx.fillStyle=n.id===f?"#ffffff":TEXT;ctx.fillText(label(n),n.x,y);
   }
   ctx.globalAlpha=1;
@@ -476,7 +456,7 @@ function renderNote(){
     html=`<h1>${esc(M.title)}</h1><div class="chips">${(M.tags||[]).map(x=>`<span class="chip">#${esc(x)}</span>`).join("")}</div>
       ${(M.intro||[]).map(p=>`<p>${esc(p)}</p>`).join("")}
       <h2>${esc(t("keyFacts"))}</h2><ul class="facts">${(G.facts||[]).map((f0,i)=>{const f=fact(f0,i);return`<li><b>${esc(f.topic)}</b>${esc(f.text)}${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(t("source"))}</a>`:""}</li>`}).join("")}</ul>
-      <details class="srcs"><summary>${esc(t("sources",(G.sources||[]).length))}</summary><ol>${(G.sources||[]).map(u=>`<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(short(u))}</a></li>`).join("")}</ol></details>`;
+      <details class="srcs"><summary>${esc(t("sources",(G.sources||[]).length))}</summary><ol>${(G.sources||[]).map(u=>`<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(short(u))}</a></li>`).join("")}</ol></details><p class="credit">${esc(t("credit"))}</p>`;
     status=t("statusOverview",nodes.length,G.links.length);
   }else{
     const outs=G.links.filter(l=>l.source===id),ins=G.links.filter(l=>l.target===id);
@@ -487,15 +467,15 @@ function renderNote(){
       ${ins.length?`<h2>${esc(t("inLinks",ins.length))}</h2><ul class="rels">${ins.map(l=>item(l,l.source)).join("")}</ul>`:""}`;
     status=t("statusNode",ins.length,outs.length,note(n).length);title=label(n);
   }
-  $("#note").innerHTML=html;$("#ntab").textContent=title;$("#ncrumb").textContent=title;$("#status").textContent=status;
+  $("#note").innerHTML=html;$("#ntab").textContent=title;$("#status").textContent=status;
   $("#nscroll").scrollTop=0;$("#nback").disabled=hi<=0;$("#nfwd").disabled=hi>=hist.length-1;$("#nclose").hidden=!n;
 }
 $("#note").addEventListener("click",e=>{const b=e.target.closest(".rel");if(b)select(b.dataset.id)});
 $("#nclose").addEventListener("click",e=>{e.stopPropagation();select(null)});
 function setFold(c){const m=$(".main");m.classList.toggle("collapsed",c);const b=$("#nfold");b.setAttribute("aria-expanded",String(!c));b.setAttribute("aria-label",c?t("unfold"):t("fold"))}
-$(".npane .tabbar").addEventListener("click",e=>{if(e.target.closest("#nclose"))return;setFold(!$(".main").classList.contains("collapsed"))});
-$("#nback").addEventListener("click",()=>{if(hi>0){hi--;select(hist[hi],false)}});
-$("#nfwd").addEventListener("click",()=>{if(hi<hist.length-1){hi++;select(hist[hi],false)}});
+$(".npane .phead").addEventListener("click",e=>{if(e.target.closest("#nback,#nfwd,#nclose"))return;setFold(!$(".main").classList.contains("collapsed"))});
+$("#nback").addEventListener("click",e=>{e.stopPropagation();if(hi>0){hi--;select(hist[hi],false)}});
+$("#nfwd").addEventListener("click",e=>{e.stopPropagation();if(hi<hist.length-1){hi++;select(hist[hi],false)}});
 
 function renderList(){
   const items=nodes.filter(match);
@@ -550,7 +530,7 @@ function applyLang(lang){
   document.querySelectorAll("[data-i18n]").forEach(el=>{el.textContent=t(el.dataset.i18n)});
   document.querySelectorAll("[data-i18n-ph]").forEach(el=>{el.placeholder=t(el.dataset.i18nPh)});
   document.querySelectorAll("[data-i18n-attr]").forEach(el=>el.dataset.i18nAttr.split(";").forEach(p=>{const[a,k]=p.split(":");el.setAttribute(a,t(k))}));
-  document.title=meta().title;
+  document.title=meta().title;$("#brand").textContent=meta().title;
   $("#langcur").textContent=LANGS.find(x=>x[0]===lang)[1];
   document.querySelectorAll("#langmenu [data-lang]").forEach(b=>b.setAttribute("aria-checked",String(b.dataset.lang===lang)));
   renderGroups();renderList();renderNote();retarget();setFold($(".main").classList.contains("collapsed"));
