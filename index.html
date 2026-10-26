@@ -539,7 +539,7 @@ function pickLang(){
   const h=location.hash.slice(1);if(UI[h])return h;
   try{const s=localStorage.getItem("fcg-lang");if(UI[s])return s}catch(_){}
   for(const l of (navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||""])){const p=String(l).slice(0,2).toLowerCase();if(UI[p])return p}
-  return"zh";
+  return"en";
 }
 const lb=$("#langbtn"),lm=$("#langmenu");
 const closeLang=()=>{lm.hidden=true;lb.setAttribute("aria-expanded","false")};
