@@ -13,6 +13,9 @@
   --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
   color-scheme:dark;
 }
+html:lang(en){--font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+html:lang(ja){--font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI","Meiryo","Noto Sans CJK JP",sans-serif}
+html:lang(ko){--font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic","Noto Sans CJK KR",sans-serif}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{margin:0;background:var(--bg);color:var(--text)}
@@ -55,6 +58,15 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .gpane{border-bottom:1px solid var(--border)}
 .tabbar{display:flex;align-items:flex-end;height:38px;background:var(--bg-2);border-bottom:1px solid var(--border);padding:0 8px;flex:none}
 .tab{display:flex;align-items:center;gap:8px;height:30px;max-width:280px;padding:0 10px 0 12px;background:var(--bg);border:1px solid var(--border);border-bottom:0;border-radius:8px 8px 0 0;font-size:13px;margin-bottom:-1px}
+.gpane .tabbar{position:relative;z-index:5}
+.langwrap{margin-left:auto;align-self:center;position:relative}
+.langbtn{display:flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:6px;color:var(--muted);font-size:13px;border:1px solid var(--border);background:var(--bg)}
+.langbtn:hover,.langbtn[aria-expanded="true"]{color:var(--text);border-color:#4a4a4a}
+.langmenu{position:absolute;right:0;top:calc(100% + 6px);min-width:150px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:4px;box-shadow:0 8px 30px rgba(0,0,0,.45);display:flex;flex-direction:column}
+.langmenu button{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:6px 10px;border-radius:5px;font-size:13px;text-align:left}
+.langmenu button:hover{background:var(--hover)}
+.langmenu button[aria-checked="true"]{color:var(--accent)}
+.langmenu button[aria-checked="true"]::after{content:"✓"}
 .tab .tt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tab .pin{color:var(--accent)}
 .tab button{width:18px;height:18px;display:grid;place-items:center;border-radius:4px;color:var(--faint)}
@@ -152,62 +164,62 @@ input[type=range]{width:100%;accent-color:var(--accent-strong)}
     </div>
     <label class="search" for="q">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="text" placeholder="搜索节点…" autocomplete="off">
-      <button id="qclear" type="button" aria-label="清空搜索" hidden><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <input id="q" type="text" data-i18n-ph="search" placeholder="搜索节点…" autocomplete="off">
+      <button id="qclear" type="button" data-i18n-attr="aria-label:clear" aria-label="清空搜索" hidden><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </label>
-    <div class="meta"><span id="count"></span><span>按关联数排序</span></div>
+    <div class="meta"><span id="count"></span><span data-i18n="sortBy">按关联数排序</span></div>
     <div class="list" id="list"></div>
   </aside>
   <main class="main">
     <section class="gpane">
-      <div class="tabbar"><div class="tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="8" r="2.5"/><circle cx="10" cy="18" r="2.5"/><path d="M8 7l7.5 1M7 8l2 8M12 17l4.5-7"/></svg><span class="tt">Graph view</span><svg class="pin" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4h6l-1 6 4 4H6l4-4zM12 14v7"/></svg></div></div>
-      <div class="crumb"><span class="navs" aria-hidden="true"><span>‹</span><span>›</span></span><span>Graph view</span></div>
+      <div class="tabbar"><div class="tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="8" r="2.5"/><circle cx="10" cy="18" r="2.5"/><path d="M8 7l7.5 1M7 8l2 8M12 17l4.5-7"/></svg><span class="tt" data-i18n="graphView">Graph view</span><svg class="pin" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4h6l-1 6 4 4H6l4-4zM12 14v7"/></svg></div><div class="langwrap"><button class="langbtn" id="langbtn" type="button" aria-haspopup="menu" aria-expanded="false" data-i18n-attr="title:language;aria-label:language" title="语言" aria-label="语言"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span id="langcur">中文</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button><div class="langmenu" id="langmenu" role="menu" hidden><button type="button" role="menuitemradio" data-lang="zh" lang="zh-CN">中文</button><button type="button" role="menuitemradio" data-lang="en" lang="en">English</button><button type="button" role="menuitemradio" data-lang="ja" lang="ja">日本語</button><button type="button" role="menuitemradio" data-lang="ko" lang="ko">한국어</button></div></div></div>
+      <div class="crumb"><span class="navs" aria-hidden="true"><span>‹</span><span>›</span></span><span data-i18n="graphView">Graph view</span></div>
       <div class="wrap" id="wrap">
-        <canvas id="cv" aria-label="法国危机关系图谱：可拖拽、缩放，点击节点查看说明"></canvas>
+        <canvas id="cv" data-i18n-attr="aria-label:canvas" aria-label="法国危机关系图谱：可拖拽、缩放，点击节点查看说明"></canvas>
         <div class="tools">
           <div class="tgroup">
-            <button id="t-set" type="button" aria-label="图谱设置" title="图谱设置"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
-            <button id="t-wand" type="button" aria-label="重新排布" title="重新排布"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 15 9M14 4v2M19 9h2M18 5l1.5-1.5M10 5l-1-1M20 14l-1-1"/></svg></button>
+            <button id="t-set" type="button" data-i18n-attr="aria-label:settings;title:settings" aria-label="图谱设置" title="图谱设置"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+            <button id="t-wand" type="button" data-i18n-attr="aria-label:relayout;title:relayout" aria-label="重新排布" title="重新排布"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 15 9M14 4v2M19 9h2M18 5l1.5-1.5M10 5l-1-1M20 14l-1-1"/></svg></button>
           </div>
           <div class="tgroup">
-            <button id="t-in" type="button" aria-label="放大" title="放大"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
-            <button id="t-fit" type="button" aria-label="适应窗口" title="适应窗口"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
-            <button id="t-out" type="button" aria-label="缩小" title="缩小"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg></button>
+            <button id="t-in" type="button" data-i18n-attr="aria-label:zoomIn;title:zoomIn" aria-label="放大" title="放大"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+            <button id="t-fit" type="button" data-i18n-attr="aria-label:fit;title:fit" aria-label="适应窗口" title="适应窗口"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+            <button id="t-out" type="button" data-i18n-attr="aria-label:zoomOut;title:zoomOut" aria-label="缩小" title="缩小"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg></button>
           </div>
         </div>
         <div class="controls" id="controls" hidden>
-          <div class="ctl-head"><span>图谱设置</span><button id="reset" type="button" title="恢复默认" aria-label="恢复默认"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v5h5"/></svg></button></div>
-          <details class="sec" open><summary>筛选</summary><div class="body">
-            <div class="row"><label for="f-weak">显示间接关联</label><span class="toggle"><input id="f-weak" type="checkbox" checked><span></span></span></div>
-            <div class="row"><label for="f-cont">显示有争议关联</label><span class="toggle"><input id="f-cont" type="checkbox" checked><span></span></span></div>
+          <div class="ctl-head"><span data-i18n="settings">图谱设置</span><button id="reset" type="button" data-i18n-attr="aria-label:reset;title:reset" title="恢复默认" aria-label="恢复默认"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v5h5"/></svg></button></div>
+          <details class="sec" open><summary data-i18n="filters">筛选</summary><div class="body">
+            <div class="row"><label for="f-weak" data-i18n="showWeak">显示间接关联</label><span class="toggle"><input id="f-weak" type="checkbox" checked><span></span></span></div>
+            <div class="row"><label for="f-cont" data-i18n="showCont">显示有争议关联</label><span class="toggle"><input id="f-cont" type="checkbox" checked><span></span></span></div>
           </div></details>
-          <details class="sec" open><summary>分组</summary><div class="body" id="groups"></div></details>
-          <details class="sec" open><summary>显示</summary><div class="body">
-            <div class="row"><label for="d-hull">分组水洼</label><span class="toggle"><input id="d-hull" type="checkbox" checked><span></span></span></div>
-            <div class="row"><label for="d-flow">因果流动</label><span class="toggle"><input id="d-flow" type="checkbox" checked><span></span></span></div>
-            <div class="row"><label for="d-arrow">箭头</label><span class="toggle"><input id="d-arrow" type="checkbox" checked><span></span></span></div>
-            <div class="slider"><label for="d-fade">文字渐隐阈值</label><input id="d-fade" type="range" min="0.2" max="2" step="0.05" value="0.55"></div>
-            <div class="slider"><label for="d-size">节点大小</label><input id="d-size" type="range" min="0.5" max="2" step="0.05" value="1"></div>
-            <div class="slider"><label for="d-line">连线粗细</label><input id="d-line" type="range" min="0.4" max="3" step="0.1" value="1"></div>
+          <details class="sec" open><summary data-i18n="groups">分组</summary><div class="body" id="groups"></div></details>
+          <details class="sec" open><summary data-i18n="display">显示</summary><div class="body">
+            <div class="row"><label for="d-hull" data-i18n="hull">分组水洼</label><span class="toggle"><input id="d-hull" type="checkbox" checked><span></span></span></div>
+            <div class="row"><label for="d-flow" data-i18n="flow">因果流动</label><span class="toggle"><input id="d-flow" type="checkbox" checked><span></span></span></div>
+            <div class="row"><label for="d-arrow" data-i18n="arrows">箭头</label><span class="toggle"><input id="d-arrow" type="checkbox" checked><span></span></span></div>
+            <div class="slider"><label for="d-fade" data-i18n="fade">文字渐隐阈值</label><input id="d-fade" type="range" min="0.2" max="2" step="0.05" value="0.55"></div>
+            <div class="slider"><label for="d-size" data-i18n="nodeSize">节点大小</label><input id="d-size" type="range" min="0.5" max="2" step="0.05" value="1"></div>
+            <div class="slider"><label for="d-line" data-i18n="lineWidth">连线粗细</label><input id="d-line" type="range" min="0.4" max="3" step="0.1" value="1"></div>
             <div class="legend">
-              <div><svg width="26" height="6"><line x1="0" y1="3" x2="26" y2="3" stroke="#bbb" stroke-width="1.4"/></svg>较直接</div>
-              <div><svg width="26" height="6"><line x1="0" y1="3" x2="26" y2="3" stroke="#bbb" stroke-dasharray="1.5 3"/></svg>间接</div>
-              <div><svg width="26" height="6"><line x1="0" y1="3" x2="26" y2="3" stroke="#bbb" stroke-dasharray="5 3"/></svg>有争议</div>
+              <div><svg width="26" height="6"><line x1="0" y1="3" x2="26" y2="3" stroke="#bbb" stroke-width="1.4"/></svg><span data-i18n="strong">较直接</span></div>
+              <div><svg width="26" height="6"><line x1="0" y1="3" x2="26" y2="3" stroke="#bbb" stroke-dasharray="1.5 3"/></svg><span data-i18n="weak">间接</span></div>
+              <div><svg width="26" height="6"><line x1="0" y1="3" x2="26" y2="3" stroke="#bbb" stroke-dasharray="5 3"/></svg><span data-i18n="contested">有争议</span></div>
             </div>
           </div></details>
-          <details class="sec"><summary>力</summary><div class="body">
-            <div class="slider"><label for="p-cluster">分组聚拢</label><input id="p-cluster" type="range" min="0" max="0.25" step="0.005" value="0.08"></div>
-            <div class="slider"><label for="p-repel">排斥力</label><input id="p-repel" type="range" min="50" max="900" step="10" value="300"></div>
-            <div class="slider"><label for="p-link">连线力</label><input id="p-link" type="range" min="0.05" max="1" step="0.05" value="0.4"></div>
-            <div class="slider"><label for="p-dist">连线距离</label><input id="p-dist" type="range" min="30" max="220" step="5" value="85"></div>
-            <button class="btn" id="relayout" type="button">重新排布</button>
+          <details class="sec"><summary data-i18n="forces">力</summary><div class="body">
+            <div class="slider"><label for="p-cluster" data-i18n="cluster">分组聚拢</label><input id="p-cluster" type="range" min="0" max="0.25" step="0.005" value="0.1"></div>
+            <div class="slider"><label for="p-repel" data-i18n="repel">排斥力</label><input id="p-repel" type="range" min="50" max="900" step="10" value="300"></div>
+            <div class="slider"><label for="p-link" data-i18n="linkF">连线力</label><input id="p-link" type="range" min="0.05" max="1" step="0.05" value="0.4"></div>
+            <div class="slider"><label for="p-dist" data-i18n="linkD">连线距离</label><input id="p-dist" type="range" min="30" max="220" step="5" value="85"></div>
+            <button class="btn" id="relayout" type="button" data-i18n="relayout">重新排布</button>
           </div></details>
         </div>
       </div>
     </section>
     <section class="npane">
-      <div class="tabbar"><div class="tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/></svg><span class="tt" id="ntab"></span><button id="nclose" type="button" aria-label="返回总览" title="返回总览"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><button class="fold" id="nfold" type="button" aria-label="收起笔记面板" aria-expanded="true" title="收起 / 展开"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button></div>
-      <div class="crumb"><span class="navs"><button id="nback" type="button" aria-label="后退">‹</button><button id="nfwd" type="button" aria-label="前进">›</button></span><span id="ncrumb"></span></div>
+      <div class="tabbar"><div class="tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/></svg><span class="tt" id="ntab"></span><button id="nclose" type="button" data-i18n-attr="aria-label:overview;title:overview" aria-label="返回总览" title="返回总览"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><button class="fold" id="nfold" type="button" aria-label="收起笔记面板" aria-expanded="true" data-i18n-attr="title:foldTitle" title="收起 / 展开"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button></div>
+      <div class="crumb"><span class="navs"><button id="nback" type="button" data-i18n-attr="aria-label:back" aria-label="后退">‹</button><button id="nfwd" type="button" data-i18n-attr="aria-label:fwd" aria-label="前进">›</button></span><span id="ncrumb"></span></div>
       <div class="nscroll" id="nscroll"><article class="note" id="note"></article></div>
       <div class="status" id="status"></div>
     </section>
@@ -216,17 +228,58 @@ input[type=range]{width:100%;accent-color:var(--accent-strong)}
 
 <script src="d3.min.js"></script>
 <script src="data.js"></script>
+<script src="data.en.js"></script>
+<script src="data.ja.js"></script>
+<script src="data.ko.js"></script>
 <script>
 (()=>{
 const $=s=>document.querySelector(s);
 const G=window.GRAPH, GROUPS=G.groups, gkeys=Object.keys(GROUPS);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
-const FONT=getComputedStyle(document.documentElement).getPropertyValue("--font-ui").trim();
-const SNAME={strong:"较直接",weak:"间接",contested:"有争议"};
+let FONT=getComputedStyle(document.documentElement).getPropertyValue("--font-ui").trim();
 const ACC="#a68af9", BG="#1e1e1e", LINE="#4d4d4d", TEXT="#c9c9c9";
 const gc=g=>(GROUPS[g]||{color:"#999999"}).color;
-const gname=g=>(GROUPS[g]||{name:g}).name;
+const LANGS=[["zh","中文"],["en","English"],["ja","日本語"],["ko","한국어"]];
+const UI={
+ zh:{language:"语言",search:"搜索节点…",clear:"清空搜索",results:n=>`${n} 个结果`,sortBy:"按关联数排序",graphView:"关系图谱",canvas:"法国危机关系图谱：可拖拽、缩放，点击节点查看说明",
+  settings:"图谱设置",relayout:"重新排布",zoomIn:"放大",fit:"适应窗口",zoomOut:"缩小",reset:"恢复默认",filters:"筛选",showWeak:"显示间接关联",showCont:"显示有争议关联",
+  groups:"分组",display:"显示",hull:"分组水洼",flow:"因果流动",arrows:"箭头",fade:"文字渐隐阈值",nodeSize:"节点大小",lineWidth:"连线粗细",
+  strong:"较直接",weak:"间接",contested:"有争议",forces:"力",cluster:"分组聚拢",repel:"排斥力",linkF:"连线力",linkD:"连线距离",
+  overview:"返回总览",fold:"收起笔记面板",unfold:"展开笔记面板",foldTitle:"收起 / 展开",back:"后退",fwd:"前进",
+  keyFacts:"关键数据",sources:n=>`参考来源（${n}）`,source:"来源 ↗",outLinks:n=>`出链：它影响了（${n}）`,inLinks:n=>`反向链接：它的成因（${n}）`,nLinks:n=>`${n} 条关联`,
+  statusOverview:(n,l)=>`${n} 个节点 · ${l} 条关联`,statusNode:(i,o,c)=>`${i} 条反向链接 · ${o} 条出链 · ${c} 字`},
+ en:{language:"Language",search:"Search nodes…",clear:"Clear search",results:n=>`${n} results`,sortBy:"Sorted by links",graphView:"Graph view",canvas:"France crisis graph: drag, zoom, and click a node to read its note",
+  settings:"Graph settings",relayout:"Re-layout",zoomIn:"Zoom in",fit:"Fit to view",zoomOut:"Zoom out",reset:"Restore defaults",filters:"Filters",showWeak:"Show indirect links",showCont:"Show contested links",
+  groups:"Groups",display:"Display",hull:"Group areas",flow:"Causal flow",arrows:"Arrows",fade:"Label fade threshold",nodeSize:"Node size",lineWidth:"Link thickness",
+  strong:"Direct",weak:"Indirect",contested:"Contested",forces:"Forces",cluster:"Group pull",repel:"Repel force",linkF:"Link force",linkD:"Link distance",
+  overview:"Back to overview",fold:"Collapse note pane",unfold:"Expand note pane",foldTitle:"Collapse / expand",back:"Back",fwd:"Forward",
+  keyFacts:"Key facts",sources:n=>`Sources (${n})`,source:"Source ↗",outLinks:n=>`Outgoing: what it affects (${n})`,inLinks:n=>`Backlinks: what caused it (${n})`,nLinks:n=>`${n} links`,
+  statusOverview:(n,l)=>`${n} nodes · ${l} links`,statusNode:(i,o,c)=>`${i} backlinks · ${o} outgoing · ${c} chars`},
+ ja:{language:"言語",search:"ノードを検索…",clear:"検索をクリア",results:n=>`${n} 件`,sortBy:"リンク数順",graphView:"グラフビュー",canvas:"フランス危機の関係グラフ：ドラッグ・ズーム可能、ノードをクリックで説明を表示",
+  settings:"グラフ設定",relayout:"再配置",zoomIn:"拡大",fit:"全体を表示",zoomOut:"縮小",reset:"初期設定に戻す",filters:"フィルター",showWeak:"間接的な関連を表示",showCont:"議論のある関連を表示",
+  groups:"グループ",display:"表示",hull:"グループ領域",flow:"因果の流れ",arrows:"矢印",fade:"ラベルのフェード",nodeSize:"ノードの大きさ",lineWidth:"リンクの太さ",
+  strong:"直接的",weak:"間接的",contested:"議論あり",forces:"フォース",cluster:"グループの引力",repel:"反発力",linkF:"リンクの力",linkD:"リンクの距離",
+  overview:"概要に戻る",fold:"ノートを折りたたむ",unfold:"ノートを展開",foldTitle:"折りたたむ／展開",back:"戻る",fwd:"進む",
+  keyFacts:"主なデータ",sources:n=>`参考資料（${n}）`,source:"出典 ↗",outLinks:n=>`発リンク：影響を与えたもの（${n}）`,inLinks:n=>`バックリンク：その原因（${n}）`,nLinks:n=>`リンク ${n}`,
+  statusOverview:(n,l)=>`ノード ${n} · リンク ${l}`,statusNode:(i,o,c)=>`バックリンク ${i} · 発リンク ${o} · ${c} 文字`},
+ ko:{language:"언어",search:"노드 검색…",clear:"검색 지우기",results:n=>`결과 ${n}개`,sortBy:"연결 수 순",graphView:"그래프 뷰",canvas:"프랑스 위기 관계도: 드래그·확대 가능, 노드를 클릭하면 설명 표시",
+  settings:"그래프 설정",relayout:"다시 배치",zoomIn:"확대",fit:"화면에 맞추기",zoomOut:"축소",reset:"기본값 복원",filters:"필터",showWeak:"간접 연결 표시",showCont:"논쟁적 연결 표시",
+  groups:"그룹",display:"표시",hull:"그룹 영역",flow:"인과 흐름",arrows:"화살표",fade:"라벨 페이드 기준",nodeSize:"노드 크기",lineWidth:"연결선 굵기",
+  strong:"직접적",weak:"간접적",contested:"논쟁적",forces:"힘",cluster:"그룹 응집력",repel:"반발력",linkF:"연결 힘",linkD:"연결 거리",
+  overview:"개요로 돌아가기",fold:"노트 접기",unfold:"노트 펼치기",foldTitle:"접기 / 펼치기",back:"뒤로",fwd:"앞으로",
+  keyFacts:"핵심 데이터",sources:n=>`참고 자료 (${n})`,source:"출처 ↗",outLinks:n=>`나가는 링크: 영향을 준 것 (${n})`,inLinks:n=>`백링크: 원인 (${n})`,nLinks:n=>`연결 ${n}개`,
+  statusOverview:(n,l)=>`노드 ${n}개 · 연결 ${l}개`,statusNode:(i,o,c)=>`백링크 ${i}개 · 나가는 링크 ${o}개 · ${c}자`}
+};
+const I18N=window.GRAPH_I18N||{};
+let L="zh",TR=null;
+const t=(k,...a)=>{const v=(UI[L]&&UI[L][k]!==undefined)?UI[L][k]:UI.zh[k];return typeof v==="function"?v(...a):v};
+const label=n=>(TR&&TR.nodes&&TR.nodes[n.id]&&TR.nodes[n.id].label)||n.label;
+const note=n=>(TR&&TR.nodes&&TR.nodes[n.id]&&TR.nodes[n.id].note)||n.note;
+const lnote=l=>(TR&&TR.links&&TR.links[l.source+">"+l.target])||l.note;
+const meta=()=>Object.assign({},G.meta,TR&&TR.meta);
+const fact=(f,i)=>Object.assign({},f,TR&&TR.facts&&TR.facts[i]);
+const gname=g=>(TR&&TR.groups&&TR.groups[g])||(GROUPS[g]||{name:g}).name;
 const rgb=h=>{h=h.replace("#","");return[0,2,4].map(i=>parseInt(h.slice(i,i+2),16))};
 const rgba=(h,a)=>`rgba(${rgb(h).join(",")},${a})`;
 const mix=(a,b,t)=>{const A=rgb(a),B=rgb(b);return`rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(",")})`};
@@ -244,16 +297,20 @@ const S={hidden:new Set(),weak:true,cont:true,arrow:true,hull:true,flow:!reduced
 const R=d=>(4.5+Math.sqrt(deg.get(d.id))*2.6)*S.size;
 const nodeOn=n=>!S.hidden.has(n.group);
 const linkOn=l=>(l.strength!=="weak"||S.weak)&&(l.strength!=="contested"||S.cont)&&nodeOn(l.source)&&nodeOn(l.target);
-const match=n=>!S.q||n.label.includes(S.q)||n.note.includes(S.q);
+const match=n=>!S.q||(label(n)+"\n"+note(n)).toLowerCase().includes(S.q.toLowerCase());
 
 const anchor={};
-gkeys.forEach((g,i)=>{const t=-Math.PI*.75+i/gkeys.length*Math.PI*2;anchor[g]=[Math.cos(t)*240,Math.sin(t)*150]});
+gkeys.forEach((g,i)=>{const t=-Math.PI*.75+i/gkeys.length*Math.PI*2;anchor[g]=[Math.cos(t)*330,Math.sin(t)*200]});
 const ax=d=>(anchor[d.group]||[0,0])[0], ay=d=>(anchor[d.group]||[0,0])[1];
-const DEF={cluster:.08,repel:300,link:.4,dist:85};
+const DEF={cluster:.1,repel:300,link:.4,dist:85};
+{const mc=document.createElement("canvas").getContext("2d");mc.font=`12.5px ${FONT}`;
+ const langs=Object.keys(I18N);
+ nodes.forEach(n=>{n.lw=Math.max(mc.measureText(n.label).width,...langs.map(k=>{const x=I18N[k].nodes&&I18N[k].nodes[n.id];return x&&x.label?mc.measureText(x.label).width:0}))})}
+const CR=d=>Math.max(R(d)+22,d.lw*.5);
 const sim=d3.forceSimulation(nodes)
   .force("link",d3.forceLink(links).id(d=>d.id).distance(DEF.dist).strength(DEF.link))
   .force("charge",d3.forceManyBody().strength(-DEF.repel))
-  .force("collide",d3.forceCollide(d=>R(d)+22).iterations(2))
+  .force("collide",d3.forceCollide(CR).iterations(3))
   .force("x",d3.forceX(ax).strength(DEF.cluster))
   .force("y",d3.forceY(ay).strength(DEF.cluster))
   .stop();
@@ -346,8 +403,8 @@ function drawLabels(f){
     const near=f&&(n.id===f||adj.get(f).has(n.id)), a=n.a*(near?1:za);
     if(a<.02)continue;
     const y=n.y+R(n)+(n.id===f?9:5);
-    ctx.globalAlpha=a;ctx.lineWidth=3.5/T.k;ctx.strokeStyle="rgba(30,30,30,.85)";ctx.strokeText(n.label,n.x,y);
-    ctx.fillStyle=n.id===f?"#ffffff":TEXT;ctx.fillText(n.label,n.x,y);
+    ctx.globalAlpha=a;ctx.lineWidth=3.5/T.k;ctx.strokeStyle="rgba(30,30,30,.85)";ctx.strokeText(label(n),n.x,y);
+    ctx.fillStyle=n.id===f?"#ffffff":TEXT;ctx.fillText(label(n),n.x,y);
   }
   ctx.globalAlpha=1;
 }
@@ -413,40 +470,40 @@ function select(id,push=true){
 }
 const short=u=>{let s=u;try{s=decodeURI(u)}catch(_){}return s.replace(/^https?:\/\/(www\.)?/,"")};
 function renderNote(){
-  const id=S.sel,n=id?byId.get(id):null;let html,title,status;
+  const id=S.sel,n=id?byId.get(id):null,M=meta();let html,title,status;
   if(!n){
-    title=G.meta.title;
-    html=`<h1>${esc(G.meta.title)}</h1><div class="chips">${(G.meta.tags||[]).map(t=>`<span class="chip">#${esc(t)}</span>`).join("")}</div>
-      ${(G.meta.intro||[]).map(p=>`<p>${esc(p)}</p>`).join("")}
-      <h2>关键数据</h2><ul class="facts">${(G.facts||[]).map(f=>`<li><b>${esc(f.topic)}</b>${esc(f.text)}${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">来源 ↗</a>`:""}</li>`).join("")}</ul>
-      <details class="srcs"><summary>参考来源（${(G.sources||[]).length}）</summary><ol>${(G.sources||[]).map(u=>`<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(short(u))}</a></li>`).join("")}</ol></details>`;
-    status=`${nodes.length} 个节点 · ${G.links.length} 条关联`;
+    title=M.title;
+    html=`<h1>${esc(M.title)}</h1><div class="chips">${(M.tags||[]).map(x=>`<span class="chip">#${esc(x)}</span>`).join("")}</div>
+      ${(M.intro||[]).map(p=>`<p>${esc(p)}</p>`).join("")}
+      <h2>${esc(t("keyFacts"))}</h2><ul class="facts">${(G.facts||[]).map((f0,i)=>{const f=fact(f0,i);return`<li><b>${esc(f.topic)}</b>${esc(f.text)}${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(t("source"))}</a>`:""}</li>`}).join("")}</ul>
+      <details class="srcs"><summary>${esc(t("sources",(G.sources||[]).length))}</summary><ol>${(G.sources||[]).map(u=>`<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(short(u))}</a></li>`).join("")}</ol></details>`;
+    status=t("statusOverview",nodes.length,G.links.length);
   }else{
     const outs=G.links.filter(l=>l.source===id),ins=G.links.filter(l=>l.target===id);
-    const item=(l,oid)=>{const o=byId.get(oid);return`<li><button class="rel" type="button" data-id="${esc(o.id)}"><span class="dot" style="background:${gc(o.group)}"></span><span class="rl">${esc(o.label)}</span><span class="s ${esc(l.strength)}">${esc(SNAME[l.strength]||l.strength)}</span></button><div class="rn">${esc(l.note)}</div></li>`};
+    const item=(l,oid)=>{const o=byId.get(oid);return`<li><button class="rel" type="button" data-id="${esc(o.id)}"><span class="dot" style="background:${gc(o.group)}"></span><span class="rl">${esc(label(o))}</span><span class="s ${esc(l.strength)}">${esc(t(l.strength)||l.strength)}</span></button><div class="rn">${esc(lnote(l))}</div></li>`};
     const c=gc(n.group);
-    html=`<h1>${esc(n.label)}</h1><div class="chips"><span class="chip" style="color:${c};background:${rgba(c,.14)}">#${esc(gname(n.group))}</span><span class="chip">${deg.get(n.id)} 条关联</span></div><p>${esc(n.note)}</p>
-      ${outs.length?`<h2>出链：它影响了（${outs.length}）</h2><ul class="rels">${outs.map(l=>item(l,l.target)).join("")}</ul>`:""}
-      ${ins.length?`<h2>反向链接：它的成因（${ins.length}）</h2><ul class="rels">${ins.map(l=>item(l,l.source)).join("")}</ul>`:""}`;
-    status=`${ins.length} 条反向链接 · ${outs.length} 条出链 · ${n.note.length} 字`;title=n.label;
+    html=`<h1>${esc(label(n))}</h1><div class="chips"><span class="chip" style="color:${c};background:${rgba(c,.14)}">#${esc(gname(n.group))}</span><span class="chip">${esc(t("nLinks",deg.get(n.id)))}</span></div><p>${esc(note(n))}</p>
+      ${outs.length?`<h2>${esc(t("outLinks",outs.length))}</h2><ul class="rels">${outs.map(l=>item(l,l.target)).join("")}</ul>`:""}
+      ${ins.length?`<h2>${esc(t("inLinks",ins.length))}</h2><ul class="rels">${ins.map(l=>item(l,l.source)).join("")}</ul>`:""}`;
+    status=t("statusNode",ins.length,outs.length,note(n).length);title=label(n);
   }
   $("#note").innerHTML=html;$("#ntab").textContent=title;$("#ncrumb").textContent=title;$("#status").textContent=status;
   $("#nscroll").scrollTop=0;$("#nback").disabled=hi<=0;$("#nfwd").disabled=hi>=hist.length-1;$("#nclose").hidden=!n;
 }
 $("#note").addEventListener("click",e=>{const b=e.target.closest(".rel");if(b)select(b.dataset.id)});
 $("#nclose").addEventListener("click",e=>{e.stopPropagation();select(null)});
-function setFold(c){const m=$(".main");m.classList.toggle("collapsed",c);const b=$("#nfold");b.setAttribute("aria-expanded",String(!c));b.setAttribute("aria-label",c?"展开笔记面板":"收起笔记面板")}
+function setFold(c){const m=$(".main");m.classList.toggle("collapsed",c);const b=$("#nfold");b.setAttribute("aria-expanded",String(!c));b.setAttribute("aria-label",c?t("unfold"):t("fold"))}
 $(".npane .tabbar").addEventListener("click",e=>{if(e.target.closest("#nclose"))return;setFold(!$(".main").classList.contains("collapsed"))});
 $("#nback").addEventListener("click",()=>{if(hi>0){hi--;select(hist[hi],false)}});
 $("#nfwd").addEventListener("click",()=>{if(hi<hist.length-1){hi++;select(hist[hi],false)}});
 
 function renderList(){
   const items=nodes.filter(match);
-  $("#count").textContent=`${items.length} 个结果`;
+  $("#count").textContent=t("results",items.length);
   $("#list").innerHTML=gkeys.map(g=>{
     const its=items.filter(n=>n.group===g).sort((a,b)=>deg.get(b.id)-deg.get(a.id));if(!its.length)return"";
     return`<div class="group-h"><span class="dot" style="background:${gc(g)}"></span>${esc(gname(g))}</div>`+
-      its.map(n=>`<button class="item${n.id===S.sel?" on":""}" type="button" data-id="${esc(n.id)}"><span class="name">${esc(n.label)}</span><span class="deg">${deg.get(n.id)}</span></button>`).join("")}).join("");
+      its.map(n=>`<button class="item${n.id===S.sel?" on":""}" type="button" data-id="${esc(n.id)}"><span class="name">${esc(label(n))}</span><span class="deg">${deg.get(n.id)}</span></button>`).join("")}).join("");
 }
 const list=$("#list");
 list.addEventListener("click",e=>{const b=e.target.closest(".item");if(b)select(b.dataset.id)});
@@ -455,14 +512,14 @@ list.addEventListener("mouseleave",()=>{S.hover=null;retarget()});
 $("#q").addEventListener("input",e=>{S.q=e.target.value.trim();$("#qclear").hidden=!S.q;retarget();renderList()});
 $("#qclear").addEventListener("click",()=>{const q=$("#q");q.value="";q.dispatchEvent(new Event("input"));q.focus()});
 
-$("#groups").innerHTML=gkeys.map(g=>`<div class="row"><label class="g" for="g-${esc(g)}"><span class="dot" style="background:${gc(g)};width:9px;height:9px"></span>${esc(gname(g))}</label><span class="toggle"><input id="g-${esc(g)}" data-g="${esc(g)}" type="checkbox" checked><span></span></span></div>`).join("");
+function renderGroups(){$("#groups").innerHTML=gkeys.map(g=>`<div class="row"><label class="g" for="g-${esc(g)}"><span class="dot" style="background:${gc(g)};width:9px;height:9px"></span>${esc(gname(g))}</label><span class="toggle"><input id="g-${esc(g)}" data-g="${esc(g)}" type="checkbox"${S.hidden.has(g)?"":" checked"}><span></span></span></div>`).join("")}
 $("#groups").addEventListener("change",e=>{const g=e.target.dataset.g;if(!g)return;e.target.checked?S.hidden.delete(g):S.hidden.add(g);retarget()});
 const bind=(id,fn)=>$("#"+id).addEventListener("input",e=>fn(e.target.type==="checkbox"?e.target.checked:+e.target.value));
 const kick=()=>{introDone=true;sim.alpha(.6).restart()};
 bind("f-weak",v=>{S.weak=v;retarget()});bind("f-cont",v=>{S.cont=v;retarget()});
 bind("d-hull",v=>S.hull=v);bind("d-flow",v=>S.flow=v);bind("d-arrow",v=>S.arrow=v);
 bind("d-fade",v=>S.fade=v);bind("d-line",v=>S.line=v);
-bind("d-size",v=>{S.size=v;sim.force("collide").radius(d=>R(d)+22);kick()});
+bind("d-size",v=>{S.size=v;sim.force("collide").radius(CR);kick()});
 bind("p-cluster",v=>{sim.force("x").strength(v);sim.force("y").strength(v);kick()});
 bind("p-repel",v=>{sim.force("charge").strength(-v);kick()});
 bind("p-link",v=>{sim.force("link").strength(v);kick()});
@@ -486,7 +543,34 @@ size();if(W<600){S.fade=.25;$("#d-fade").value=.25}fit(false);
 if(!reduced)nodes.forEach(n=>{n.x=n.tx*.03;n.y=n.ty*.03});
 let lastW=W,lastH=H;
 new ResizeObserver(()=>{size();if(Math.abs(W-lastW)>40||Math.abs(H-lastH)>40){lastW=W;lastH=H;syncTargets();fit(false)}}).observe(wrap);
-renderNote();renderList();retarget();
+function applyLang(lang){
+  if(!UI[lang])lang="zh";L=lang;TR=lang==="zh"?null:(I18N[lang]||null);
+  document.documentElement.lang={zh:"zh-CN",en:"en",ja:"ja",ko:"ko"}[lang];
+  FONT=getComputedStyle(document.documentElement).getPropertyValue("--font-ui").trim();
+  document.querySelectorAll("[data-i18n]").forEach(el=>{el.textContent=t(el.dataset.i18n)});
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{el.placeholder=t(el.dataset.i18nPh)});
+  document.querySelectorAll("[data-i18n-attr]").forEach(el=>el.dataset.i18nAttr.split(";").forEach(p=>{const[a,k]=p.split(":");el.setAttribute(a,t(k))}));
+  document.title=meta().title;
+  $("#langcur").textContent=LANGS.find(x=>x[0]===lang)[1];
+  document.querySelectorAll("#langmenu [data-lang]").forEach(b=>b.setAttribute("aria-checked",String(b.dataset.lang===lang)));
+  renderGroups();renderList();renderNote();retarget();setFold($(".main").classList.contains("collapsed"));
+}
+function pickLang(){
+  const h=location.hash.slice(1);if(UI[h])return h;
+  try{const s=localStorage.getItem("fcg-lang");if(UI[s])return s}catch(_){}
+  for(const l of (navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||""])){const p=String(l).slice(0,2).toLowerCase();if(UI[p])return p}
+  return"zh";
+}
+const lb=$("#langbtn"),lm=$("#langmenu");
+const closeLang=()=>{lm.hidden=true;lb.setAttribute("aria-expanded","false")};
+lb.addEventListener("click",e=>{e.stopPropagation();lm.hidden=!lm.hidden;lb.setAttribute("aria-expanded",String(!lm.hidden))});
+lm.addEventListener("click",e=>{const b=e.target.closest("[data-lang]");if(!b)return;e.stopPropagation();const v=b.dataset.lang;applyLang(v);
+  try{localStorage.setItem("fcg-lang",v)}catch(_){}try{history.replaceState(null,"","#"+v)}catch(_){}closeLang();lb.focus()});
+document.addEventListener("click",()=>{if(!lm.hidden)closeLang()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!lm.hidden){closeLang();lb.focus()}});
+window.addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(UI[h]&&h!==L)applyLang(h)});
+applyLang(pickLang());
+
 requestAnimationFrame(frame);
 })();
 </script>
