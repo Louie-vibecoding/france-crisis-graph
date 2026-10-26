@@ -41,7 +41,16 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .item.on{background:rgba(138,92,245,.2);color:#fff}
 .item .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .item .deg{font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums;background:var(--hover);padding:0 6px;border-radius:8px}
-.main{display:grid;grid-template-rows:minmax(0,1.3fr) minmax(0,1fr);min-width:0;min-height:0}
+.main{display:grid;grid-template-rows:minmax(0,2.4fr) minmax(0,1fr);min-width:0;min-height:0;transition:grid-template-rows .28s ease}
+.main.collapsed{grid-template-rows:minmax(0,1fr) 38px}
+.main.collapsed .npane .crumb,.main.collapsed .nscroll,.main.collapsed .status{display:none}
+.npane .tabbar{cursor:pointer}
+.npane .tabbar:hover{background:#2a2a2a}
+.fold{margin-left:auto;align-self:center;width:28px;height:28px;display:grid;place-items:center;border-radius:5px;color:var(--muted)}
+.fold:hover{background:var(--hover);color:var(--text)}
+.fold svg{transition:transform .2s}
+.main.collapsed .fold svg{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){.main{transition:none}}
 .gpane,.npane{display:flex;flex-direction:column;min-height:0;position:relative;overflow:hidden}
 .gpane{border-bottom:1px solid var(--border)}
 .tabbar{display:flex;align-items:flex-end;height:38px;background:var(--bg-2);border-bottom:1px solid var(--border);padding:0 8px;flex:none}
@@ -118,6 +127,7 @@ input[type=range]{width:100%;accent-color:var(--accent-strong)}
   .window{grid-template-columns:1fr;grid-template-rows:auto;height:auto;min-height:0}
   .ribbon,.pane{display:none}
   .main{grid-template-rows:62vh auto}
+  .main.collapsed{grid-template-rows:62vh 38px}
   .gpane{min-height:420px}
   .nscroll{overflow:visible}
   .note{padding:12px 4px 48px}
@@ -196,7 +206,7 @@ input[type=range]{width:100%;accent-color:var(--accent-strong)}
       </div>
     </section>
     <section class="npane">
-      <div class="tabbar"><div class="tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/></svg><span class="tt" id="ntab"></span><button id="nclose" type="button" aria-label="返回总览" title="返回总览"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></div>
+      <div class="tabbar"><div class="tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/></svg><span class="tt" id="ntab"></span><button id="nclose" type="button" aria-label="返回总览" title="返回总览"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><button class="fold" id="nfold" type="button" aria-label="收起笔记面板" aria-expanded="true" title="收起 / 展开"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button></div>
       <div class="crumb"><span class="navs"><button id="nback" type="button" aria-label="后退">‹</button><button id="nfwd" type="button" aria-label="前进">›</button></span><span id="ncrumb"></span></div>
       <div class="nscroll" id="nscroll"><article class="note" id="note"></article></div>
       <div class="status" id="status"></div>
@@ -424,7 +434,9 @@ function renderNote(){
   $("#nscroll").scrollTop=0;$("#nback").disabled=hi<=0;$("#nfwd").disabled=hi>=hist.length-1;$("#nclose").hidden=!n;
 }
 $("#note").addEventListener("click",e=>{const b=e.target.closest(".rel");if(b)select(b.dataset.id)});
-$("#nclose").addEventListener("click",()=>select(null));
+$("#nclose").addEventListener("click",e=>{e.stopPropagation();select(null)});
+function setFold(c){const m=$(".main");m.classList.toggle("collapsed",c);const b=$("#nfold");b.setAttribute("aria-expanded",String(!c));b.setAttribute("aria-label",c?"展开笔记面板":"收起笔记面板")}
+$(".npane .tabbar").addEventListener("click",e=>{if(e.target.closest("#nclose"))return;setFold(!$(".main").classList.contains("collapsed"))});
 $("#nback").addEventListener("click",()=>{if(hi>0){hi--;select(hist[hi],false)}});
 $("#nfwd").addEventListener("click",()=>{if(hi<hist.length-1){hi++;select(hist[hi],false)}});
 
@@ -472,8 +484,8 @@ $("#reset").addEventListener("click",()=>{
 
 size();if(W<600){S.fade=.25;$("#d-fade").value=.25}fit(false);
 if(!reduced)nodes.forEach(n=>{n.x=n.tx*.03;n.y=n.ty*.03});
-let lastW=W;
-new ResizeObserver(()=>{size();if(Math.abs(W-lastW)>40){lastW=W;syncTargets();fit(false)}}).observe(wrap);
+let lastW=W,lastH=H;
+new ResizeObserver(()=>{size();if(Math.abs(W-lastW)>40||Math.abs(H-lastH)>40){lastW=W;lastH=H;syncTargets();fit(false)}}).observe(wrap);
 renderNote();renderList();retarget();
 requestAnimationFrame(frame);
 })();
