@@ -1,4 +1,8 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>法国危机关系图谱</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -107,6 +111,8 @@ input[type=range]{width:100%;accent-color:var(--interactive-accent)}
   .find{grid-template-columns:1fr}
 }
 </style>
+</head>
+<body>
 <div class="window">
   <nav class="ribbon" aria-hidden="true">
     <i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></i>
@@ -336,6 +342,5 @@ document.getElementById("finds").innerHTML=FINDINGS.map(f=>`<div class="find"><s
 document.getElementById("src").innerHTML="来源："+SOURCES.map(u=>`<a href="${u}" target="_blank" rel="noopener">${(()=>{try{return decodeURI(u)}catch(_){return u}})().replace(/^https?:\/\/(www\.)?/,"").slice(0,56)}</a>`).join(" · ");
 renderPop();renderList();retarget();
 </script>
-
-
-</body></html>
+</body>
+</html>
